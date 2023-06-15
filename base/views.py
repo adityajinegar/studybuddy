@@ -81,7 +81,15 @@ def home(request):
     topics = Topic.objects.all()
     room_count = rooms.count()
 
-    context = {"rooms": rooms, "topics": topics, "room_count": room_count}
+    # To see messages related to rooms in recent activity
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+
+    context = {
+        "rooms": rooms,
+        "topics": topics,
+        "room_count": room_count,
+        "room_messages": room_messages,
+    }
     return render(request, "base/home.html", context)
 
 
@@ -89,7 +97,7 @@ def room(request, id):
     room = Room.objects.get(id=id)
     # message in message_set.all() is a model name. This query means give me all the messages associated with this room
     # order_by - to get the most recent messages
-    room_messages = room.message_set.all().order_by("-created")
+    room_messages = room.message_set.all()
     participants = room.participants.all()
 
     if request.method == "POST":
