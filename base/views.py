@@ -115,6 +115,20 @@ def room(request, id):
     return render(request, "base/room.html", context)
 
 
+def userProfile(request, id):
+    user = User.objects.get(id=id)
+    rooms = user.room_set.all()
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+    context = {
+        "user": user,
+        "rooms": rooms,
+        "topics": topics,
+        "room_messages": room_messages,
+    }
+    return render(request, "base/profile.html", context)
+
+
 # @login_url will redirect the user to the login page if the user is not authenticated
 @login_required(login_url="login")
 def createRoom(request):
